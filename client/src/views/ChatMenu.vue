@@ -61,16 +61,10 @@ onMounted(async() => {
     await useGetAllUsers().getFriends()
     usersList.value = useGetAllUsers().friends.value
 
-    socket.connect()
-    socket.auth = {  
-    username:user.value?.name,
-    user_id:user.value?.id
-    };
+    
 })
 
-onBeforeUnmount(async ()=>{
-    socket.disconnect()
-})
+
 
 </script>
 
@@ -79,9 +73,11 @@ onBeforeUnmount(async ()=>{
         <div class="chat__inner">
             <div class="chat-users">
                 <div class="current-user">
+                    <router-link to="/settings">
                     <div class="current-user__avatar">
                         <img :src="user?.avatar" alt="your-avatar">
                     </div>
+                    </router-link>
                     <div class="current-user__name">
                         {{ user?.name }}
                     </div>

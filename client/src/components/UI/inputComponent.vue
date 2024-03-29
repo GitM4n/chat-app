@@ -3,9 +3,11 @@ import { computed, ref } from 'vue'
 
 const props = defineProps<{
     modelValue?: string | number,
+    id?: string,
     type?: string,
     name?: string,
     placeholder?: string,
+    pattern?:string,
     errorMessage?:string
 }>()
 
@@ -16,7 +18,7 @@ const emit = defineEmits<{
 const inputWrapper = ref<null | HTMLDivElement>(null)
 
 const isEmpty = computed(() => {
-    return props.modelValue?.toString().length === 0
+    return props.modelValue?.toString().length === 0 || props.modelValue === undefined
 })
 
 const isFocus = () => {
@@ -40,6 +42,8 @@ const isBlur = () => {
                     :value="props.modelValue"
                     :type="props.type ? props.type : 'text'"
                     :name="props.name"
+                    :pattern="props.pattern"
+                    :id="props.id"
                     @focus="isFocus()"
                     @blur="isBlur()"
                     @input="emit('update:modelValue', ($event.target as HTMLInputElement).value )"> 

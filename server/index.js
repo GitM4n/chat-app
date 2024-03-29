@@ -39,9 +39,10 @@ io.on('connection', (client) => {
 
 
 
-    client.on('add-friend', ({sender_id, receiver_id})=>{
+    client.on('add-friend', ({sender_name, receiver_id})=>{
         const room = [sender_id, receiver_id].sort().join('-')
-        client.to(room).emit('add-friend', sender_id)
+        client.join(room)
+        client.to(room).emit('request-friend', sender_name)
         
     })
 

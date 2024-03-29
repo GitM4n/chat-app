@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { onUnmounted, computed, ref, onMounted, onBeforeUnmount } from 'vue';
-import ChatMenu from './views/ChatMenu.vue';
+import  {computed } from 'vue';
+import ChatRoot from './views/ChatRoot.vue';
 import SignView from './views/SignView.vue';
 import {useUser} from '@/composables/useUser.global'
 
@@ -20,7 +20,7 @@ const user = computed(() => {
 <template>
    <div class="wrapper">
     <main class="main">
-     <ChatMenu v-if="user?.name"/>
+     <ChatRoot v-if="user?.name"/>
      <SignView v-else/>
    
     </main>

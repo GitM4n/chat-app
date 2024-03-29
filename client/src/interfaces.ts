@@ -34,6 +34,8 @@ export interface IUser {
     avatar?:string,
     last_activity?: Date,
     online_status?: boolean,
+    birthdate?:string,
+    age?:number,
     friends?:IUser[]
 }
 

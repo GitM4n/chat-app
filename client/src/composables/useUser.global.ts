@@ -95,6 +95,42 @@ const updateUser = async(payload: Partial<IUser> | null) => {
     
 }
 
+
+    function getAge(dateString:string) {
+        let today = new Date();
+        let birthDate = new Date(dateString);
+        let age = today.getFullYear() - birthDate.getFullYear();
+        let m = today.getMonth() - birthDate.getMonth();
+        if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
+            age--;
+        }
+        
+        return getAgeString(age)
+    }
+
+
+    function getAgeString(age:number){
+        let count = age % 100
+
+        if(count >= 10 && count <= 20){
+            return age + ' лет'
+        }else{
+            count = age % 10
+            if(count === 1){
+                return age + ' год'
+            }else if(count >= 2 && count <= 4){
+                return age + ' года'
+            }else{
+                return age + ' лет'
+            }
+        }
+    }
+
+     function isLeapYear(year:string) {
+        const numYear = parseInt(year);
+        return !((numYear % 4) || (!(numYear % 100) && (numYear % 400)));
+    };
+
 const signOut = async() => {
     await updateUser({
         online_status: false

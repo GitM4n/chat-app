@@ -1,32 +1,22 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import ChatView from '../views/ChatView.vue'
-import SignView from '@/views/SignView.vue'
-import App from '@/App.vue'
+
+import SettingsView from '@/views/SettingsView.vue'
+import ChatMenu from '@/views/ChatMenu.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     {
       path: '/',
-      name: 'app',
-      component: App
-    },
-    {
-      path: '/chat',
       name: 'chat',
-      // route level code-splitting
-      // this generates a separate chunk (About.[hash].js) for this route
-      // which is lazy-loaded when the route is visited.
-      component: ChatView
+      component: ChatMenu
     },
     {
-      path: '/sign',
-      name: 'sign',
-      // route level code-splitting
-      // this generates a separate chunk (About.[hash].js) for this route
-      // which is lazy-loaded when the route is visited.
-      component: SignView
-    }
+      path: '/settings',
+      name: 'settings',
+      component:() => SettingsView
+    },
+   
   ]
 })
 

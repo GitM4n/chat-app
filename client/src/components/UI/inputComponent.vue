@@ -5,10 +5,12 @@ const props = defineProps<{
     modelValue?: string | number,
     id?: string,
     type?: string,
+    dataType?:string,
     name?: string,
     placeholder?: string,
     pattern?:string,
-    errorMessage?:string
+    errorMessage?:string,
+    maxLength?:string,
 }>()
 
 const emit = defineEmits<{
@@ -33,6 +35,24 @@ const isBlur = () => {
     }
 }
 
+const emitStandard = (val:string) => {
+    emit('update:modelValue', val)
+}
+
+const emitDateFormat = (val:string) => {
+
+    let input = val.replace(/\D/g, '');
+    input = input.replace(/(\d{2})(\d{2})(\d{4})/, '$1/$2/$3');
+    val = input
+
+    emit('update:modelValue', val)
+}
+
+
+
+
+
+
 </script>
 
 <template>
@@ -42,18 +62,17 @@ const isBlur = () => {
                     :value="props.modelValue"
                     :type="props.type ? props.type : 'text'"
                     :name="props.name"
-                    :pattern="props.pattern"
+                    :placeholder="props.placeholder"
                     :id="props.id"
+                    :maxlength="props.maxLength" 
                     @focus="isFocus()"
                     @blur="isBlur()"
-                    @input="emit('update:modelValue', ($event.target as HTMLInputElement).value )"> 
+                    @input="props.dataType === 'date' ? emitDateFormat(($event.target as HTMLInputElement).value) : emitStandard(($event.target as HTMLInputElement).value)"> 
             <div class="focus-bg"></div>
-            <span class="placeholder" v-show="isEmpty">
-                {{props.placeholder ? props.placeholder : 'Введите'}}
-            </span>
+           
         </div>
-        <small class="input-error" v-show="errorMessage">{{props.errorMessage}}</small>
     </div>
+    <small class="input-error" v-show="errorMessage">{{props.errorMessage}}</small>
 </template>
 
 <style scoped>

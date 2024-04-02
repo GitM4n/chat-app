@@ -20,7 +20,7 @@ const userRoom = ref<IUser>()
 
 
 const findFriend = (value:string) => {
-    usersList.value = useGetAllUsers().allUsers.value?.filter((user)=>{
+    usersList.value = useGetAllUsers().friends.value?.filter((user)=>{
         return user.name.toLowerCase().includes(value.toLowerCase())
     })
 }
@@ -183,10 +183,22 @@ h2{
     border-bottom: 2px solid var(--green);
 }
 
+.current-user__name{
+    font-weight: 600;
+    font-size: 24px;
+    text-transform: capitalize;
+}
+
 .current-user__avatar{
-    width: 40px;
-    height: 40px;
+    width: 50px;
+    height: 50px;
     cursor: pointer;
+    border-radius: 50%;
+    overflow: hidden;
+    border: 2px solid var(--green);
+}
+.current-user__avatar:hover{
+    border: 3px solid var(--green);
 }
 
 .current-user__avatar img{

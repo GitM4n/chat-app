@@ -22,6 +22,11 @@ const userData = ref({
 } as IUser)
 
 
+const errors = ref({
+    name: '',
+    birthdate: '',
+})
+
 
 
 const clickInput = () => {
@@ -46,17 +51,47 @@ const changeAvatar = async (input:HTMLInputElement) => {
 
 const updateData = async () => {
     userAvatar.value = user.value?.avatar
+
     if(file.value){
         const {data, error} = await supabase.storage.from('user-avatars').upload(file.value.name, file.value, {
             upsert:true,
         })
         if(error) throw(error)
         userAvatar.value = 'https://gajgokwxsvxagcsbeguz.supabase.co/storage/v1/object/public/user-avatars/' + data.path
+        
+      
+    
     }
 
+    if(!validateDate()) {
+        errors.value.birthdate = 'Недопустимый формат даты'
+        return
+    }
+  
     await userService.updateUser({avatar: userAvatar.value})
 
 }
+
+
+
+const validateDate = () => {
+
+    if(!userData.value.birthdate) return false
+
+    const parts = userData.value.birthdate.split('/');
+    const day = parseInt(parts[0], 10);
+    const month = parseInt(parts[1], 10) - 1; 
+    const year = parseInt(parts[2], 10);
+
+    const date = new Date(year, month, day);
+    return date.getDate() === day && date.getMonth() === month && date.getFullYear() === year;
+
+
+    
+}
+
+
+
 
 </script>
 
@@ -74,17 +109,26 @@ const updateData = async () => {
                     <div class="user-form__data-inputs">
                         <div class="user-form__name">
                             <p>Ваше имя</p>
-                            <inputComponent :id="'name'" v-model="userData.name" :placeholder="'Ваше имя'" />
+                            <inputComponent :id="'name'" 
+                            v-model="userData.name" 
+                            :placeholder="'Ваше имя'" />
                         </div>
                         <div class="user-form__date">
                             <p>День рождения</p>
-                            <inputComponent :id="'date'" v-model="userData.birthdate" :placeholder="'Ваша дата рождения'" />
+                            <inputComponent :id="'date'" 
+                            :maxLength="'8'" 
+                            v-model="userData.birthdate" 
+                            :placeholder="'Ваша дата рождения'" 
+                            :dataType="'date'" 
+                            :errorMessage="errors.birthdate"/>
+                           
                         </div>
                     </div>
                     <div class="user-form__age">
                         <p>Ваш возраст: {{userData.age ? userData.age : 'Не указан'}}</p>
                     </div>
                 </div>
+                <buttonComponent type="submit" @click="validateDate" class="update">Сохранить</buttonComponent>
            </form>
              
         </div>

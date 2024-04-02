@@ -40,10 +40,9 @@ const sendMessage = () => {
     emit('sendMessage')
 }
 
-
-
-
 </script>
+
+
 
 <template>
 <div class="input-wrapper" 
@@ -58,9 +57,10 @@ const sendMessage = () => {
         <span  v-show="isEmpty">Сообщение...</span>
 </div>
 <SendButton  @click="sendMessage()">Отправить</SendButton>
-
-    
 </template>
+
+
+
 
 <style scoped>
 

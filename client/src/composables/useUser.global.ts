@@ -1,6 +1,7 @@
 import {ref, onMounted} from 'vue'
 import type {IUser, RegisterPayload, LoginPayload} from '@/interfaces'
 import {supabase} from '@/supabaseClient'
+import { idText } from 'typescript'
 
 
 
@@ -81,6 +82,13 @@ const login = async(payload:LoginPayload):Promise<any> => {
 
 const updateUser = async(payload: Partial<IUser> | null) => {
 
+
+
+
+    if(payload?.birthdate && payload?.birthdate !== userData.value?.birthdate && payload?.birthdate.length === 10 ){
+       payload.age = getAge(payload?.birthdate)
+    }
+
     const {data, error} = await supabase.from('users').update(payload).eq('id', userData.value?.id).select()
 
     if(error){
@@ -92,11 +100,13 @@ const updateUser = async(payload: Partial<IUser> | null) => {
         localStorage.setItem('user', JSON.stringify(userData.value))
         
     }
+
+    
     
 }
 
 
-    function getAge(dateString:string) {
+    function getAge(dateString:string):number {
         let today = new Date();
         let birthDate = new Date(dateString);
         let age = today.getFullYear() - birthDate.getFullYear();
@@ -105,11 +115,11 @@ const updateUser = async(payload: Partial<IUser> | null) => {
             age--;
         }
         
-        return getAgeString(age)
+        return age
     }
 
 
-    function getAgeString(age:number){
+    function getAgeString(age:number):string{
         let count = age % 100
 
         if(count >= 10 && count <= 20){
@@ -147,7 +157,8 @@ const signOut = async() => {
         signOut,
         register,
         login,
-        status
+        status,
+        getAgeString
     }
 }
 

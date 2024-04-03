@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import {onMounted, onBeforeUnmount, ref} from 'vue'
+import {onMounted, ref} from 'vue'
 import {useUser} from '@/composables/useUser.global'
 import {socket} from '@/socket'
 import signOut from '@/components/signOut.vue';
@@ -27,17 +27,7 @@ const findFriend = (value:string) => {
 
 
 
-socket.on('user-status-online', async()=>{
-    await useUser().updateUser({online_status:true})
-    await useGetAllUsers().getAllUsers()
-    setTimeout(async()=>{
-    await useUser().updateUser({online_status:false})
-    }, 500)
-})
 
-socket.on('user-status-offline', async()=>{
-    await useGetAllUsers().getAllUsers()
-})
 
 
 
@@ -57,11 +47,8 @@ const setRoom = (data:IChat | IUser) => {
 
 
 onMounted(async() => {
-    await useGetAllUsers().getAllUsers()
     await useGetAllUsers().getFriends()
     usersList.value = useGetAllUsers().friends.value
-
-    
 })
 
 
@@ -100,9 +87,13 @@ onMounted(async() => {
                 </ul>
             </div>
             <div class="chat-rooms">
-                <PrivateChat :user="user" :room="userRoom" v-if="userRoom"/>
-                <PublicChat :room="room" v-else-if="room"/>
+                <template v-if="userRoom">
+                    <PrivateChat v-for="friend in usersList" :key="friend.id"  :user="user" :room="friend" v-show="friend === userRoom"/>
+                </template>
+               
+             
                 <p v-else>Выберите чат</p>
+                   <!-- <PublicChat :room="room" v-else-if="room"/> -->
             </div>
          
         </div>

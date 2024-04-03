@@ -26,15 +26,14 @@ io.on('connection', (client) => {
     
     io.emit("user-status-online");
     
-    client.on('private-room', ({sender_id, chat_id})=>{
-        const room = [sender_id, chat_id].sort().join('-')
-        client.join(room)
-        console.log(`user connecterd in room ${room}`)
+    client.on('private-room', ({chat_id})=>{
+        console.log(chat_id)
+        client.join(chat_id)
+        console.log(`user connecterd in room ${chat_id}`)
     })
 
     client.on('private-message', (data)=>{
-        const roomName = [data.sender_id, data.chat_id].sort().join('-'); 
-        io.to(roomName).emit('private-message', data); 
+        io.to(data.chat_id).emit('private-message', data); 
     })
 
 

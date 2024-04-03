@@ -1,10 +1,12 @@
 <script setup lang="ts">
-import {computed, onMounted, ref} from 'vue';
+import {computed, onMounted, ref, onUpdated} from 'vue';
 import MessageInput from '@/components/UI/MessageInput.vue';
 import { socket } from '@/socket';
-import type {IMessage, IUser} from '@/interfaces'
+import type {IMessage, IUser, IConservation} from '@/interfaces'
 import { useGetAllUsers } from '@/composables/useGetAllUsers';
+import {useMessageService} from '@/composables/useMessageService';
 const allUsers =  useGetAllUsers().allUsers
+const msgService = useMessageService()
 
 
 
@@ -22,28 +24,45 @@ const receiver = computed(()=>{
     return allUsers.value?.find(user => user.id === props.room?.id)
 })
 
-console.log(receiver.value)
 
-const message = ref<string>('')
+const chatId = computed(()=>{
+    return `${Math.min(parseInt(props.user?.id as string), parseInt(props.room?.id as string))}_${Math.max(parseInt(props.user?.id as string), parseInt(props.room?.id as string))}`
+})
+
+
+const messageObj = ref({
+  message: '',
+  sender_id:props.user?.id,
+  chat_id:chatId.value
+} as IMessage)
+
+
 const messages = ref<IMessage[]>([])
 
 socket.on('private-message', (data) => {
   messages.value.push(data)
+  console.log(messages.value)
   lastMessageScroll()
 })
-const sendMessage = () => {
 
-if(!message.value.replace(/\s/g, '').length) return
 
-socket.emit('private-message', {
-  message: message.value.trim(),
-  sender_name:props.user?.name,
-  sender_id:props.user?.id,
-  chat_id:props.room?.id
-});
+const sendMessage = async() => {
+
+messageObj.value.message = messageObj.value.message.trim()
+if(!messageObj.value.message.replace(/\s/g, '').length) return
+
+// await msgService.defineConservation({
+//       id:chatId.value,
+//       members:[props.user?.id, props.room?.id]
+//     } as IConservation)
+ 
+
+// await msgService.sendPrivateMessage(messageObj.value)
+
+socket.emit('private-message', messageObj.value);
 
 lastMessageScroll()
-message.value = '';
+messageObj.value.message = '';
 
 }
 
@@ -59,13 +78,18 @@ function lastMessageScroll() {
 }
 
 
-
 socket.emit('private-room', {
   sender_id:props.user?.id,
-  chat_id:props.room?.id
+  chat_id:chatId.value
 })
+onMounted(() => {
 
+      socket.emit('private-room', {
+      sender_id:props.user?.id,
+      chat_id:chatId.value
+    })
 
+})
 
 
 
@@ -110,7 +134,7 @@ socket.emit('private-room', {
                  
             </div>
             <div class="message-input">
-                <MessageInput style="opacity: 0.2;" v-model="message" @send-message="sendMessage"/>
+                <MessageInput  v-model="messageObj.message" @send-message="sendMessage"/>
             </div>
             
         </div>

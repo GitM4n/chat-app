@@ -16,6 +16,18 @@ export interface IMessage {
 
 }
 
+export interface IConservation {
+    id: id,
+    created_at?: string,
+    admin?:id,
+    name?: string,
+    avatar?:string,
+    members:id[]
+}
+
+
+
+
 export interface IChat {
     id: id,
     created_at?: string,

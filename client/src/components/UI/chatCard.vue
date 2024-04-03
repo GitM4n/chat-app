@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import type {IUser, IChat} from '@/interfaces'
 import {computed} from 'vue'
+import { useGetAllUsers } from '@/composables/useGetAllUsers';
+
 
 const props = defineProps<{
     user?:IUser,
@@ -8,10 +10,9 @@ const props = defineProps<{
 }>()
 
 
-const userOnlineStatus = computed(() => {
-   return props.user?.online_status
+const receiver = computed(()=>{
+    return useGetAllUsers().allUsers.value?.find(user => user.id === props.user?.id)
 })
-
 
 console.log(props.user)
 
@@ -21,7 +22,7 @@ console.log(props.user)
 <template>
     <div class="chat-card" :class="props.user ? props.user.name : ''" >
         <div class="chat-card__inner">
-            <div class="chat-card__avatar" :class="userOnlineStatus ? 'online' : 'offline'">
+            <div class="chat-card__avatar" :class="receiver?.online_status ? 'online' : 'offline'">
                 <img :src="props.user?.avatar" alt="avatar">
             </div>
             <div class="chat-card__name">

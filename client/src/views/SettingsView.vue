@@ -5,6 +5,7 @@ import {ref} from 'vue'
 import { supabase } from '@/supabaseClient';
 import inputComponent from '@/components/UI/inputComponent.vue';
 import buttonComponent from '@/components/UI/buttonComponent.vue';
+import backIcon from '@/components/icons/backIcon.vue';
 
 const userService = useUser()
 const user = userService.userData
@@ -50,16 +51,14 @@ const changeAvatar = async (input:HTMLInputElement) => {
 
 
 const updateData = async () => {
-    userAvatar.value = user.value?.avatar
+    userData.value.avatar = user.value?.avatar
 
     if(file.value){
         const {data, error} = await supabase.storage.from('user-avatars').upload(file.value.name, file.value, {
             upsert:true,
         })
         if(error) throw(error)
-        userAvatar.value = 'https://gajgokwxsvxagcsbeguz.supabase.co/storage/v1/object/public/user-avatars/' + data.path
-        
-      
+        userData.value.avatar = 'https://gajgokwxsvxagcsbeguz.supabase.co/storage/v1/object/public/user-avatars/' + data.path
     
     }
 
@@ -68,7 +67,13 @@ const updateData = async () => {
         return
     }
   
-    await userService.updateUser({avatar: userAvatar.value})
+     userService.updateUser(userData.value).catch((error) => {
+        throw error
+    })
+
+    alert('Данные обновлены')
+
+
 
 }
 
@@ -97,8 +102,13 @@ const validateDate = () => {
 
 <template>
     <div class="settings">
+        <router-link to="/">
+            <div class="settings__back">
+                <backIcon class="settings__back-icon"/>
+            </div>
+        </router-link>
         <div class="settings__inner">
-           <form action="#" class="user-form">
+           <form action="#" class="user-form" @submit.prevent>
             <legend class="form__title">Данные пользователя</legend>
                 <div class="user-form__inner">
                     <div class="user-form__avatar" @click="clickInput()">
@@ -109,7 +119,8 @@ const validateDate = () => {
                     <div class="user-form__data-inputs">
                         <div class="user-form__name">
                             <p>Ваше имя</p>
-                            <inputComponent :id="'name'" 
+                            <inputComponent :id="'name'"
+                            :maxLength="'30'" 
                             v-model="userData.name" 
                             :placeholder="'Ваше имя'" />
                         </div>
@@ -118,17 +129,17 @@ const validateDate = () => {
                             <inputComponent :id="'date'" 
                             :maxLength="'8'" 
                             v-model="userData.birthdate" 
-                            :placeholder="'Ваша дата рождения'" 
+                            :placeholder="'DDMMYYYY'" 
                             :dataType="'date'" 
                             :errorMessage="errors.birthdate"/>
                            
                         </div>
                     </div>
                     <div class="user-form__age">
-                        <p>Ваш возраст: {{userData.age ? userData.age : 'Не указан'}}</p>
+                        <p>Ваш возраст: {{userData.age ? userService.getAgeString(userData.age) : 'Не указан'}}</p>
                     </div>
                 </div>
-                <buttonComponent type="submit" @click="validateDate" class="update">Сохранить</buttonComponent>
+                <buttonComponent type="submit" @click="updateData" class="update">Сохранить</buttonComponent>
            </form>
              
         </div>
@@ -142,7 +153,9 @@ input[type="file"]{
     height: 0.1px;
 }
 
-
+.settings{
+    position: relative;
+}
 
 .settings__inner{
     height: 100%;
@@ -168,6 +181,7 @@ input[type="file"]{
 }
 
 .user-form__inner{
+    flex-grow: 1;
     display: flex;
     flex-direction: column;
     gap: 20px;
@@ -216,5 +230,20 @@ input[type="file"]{
 .user-form__data-inputs p {
     font-style: italic;
 }
+
+.settings__back{
+    position: absolute;
+    top: 5px;
+    left: 5px;
+    width: 80px;
+    height: 80px;
+}
+
+.settings__back-icon{
+    width: 100%;
+    height: 100%;
+}
+
+
 
 </style>

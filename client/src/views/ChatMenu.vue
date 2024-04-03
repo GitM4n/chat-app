@@ -13,7 +13,7 @@ import searchComponent from '../components/UI/searchComponent.vue';
 
 const user = useUser().userData
 const usersList = ref<IUser[] | null>()
-
+const loading = ref(true)
 
 const room = ref<IChat>()
 const userRoom = ref<IUser>() 
@@ -48,7 +48,11 @@ const setRoom = (data:IChat | IUser) => {
 
 onMounted(async() => {
     await useGetAllUsers().getFriends()
-    usersList.value = useGetAllUsers().friends.value
+    setTimeout(() => {
+        usersList.value = useGetAllUsers().friends.value
+        loading.value = false
+    }, 500)
+    
 })
 
 
@@ -71,13 +75,20 @@ onMounted(async() => {
                 </div>
                 <h2>Friends</h2>
                 <searchComponent @find-friend="findFriend"/>
-                <ul class="users">
-                    <chatCard v-for="user in usersList" 
-                            :key="user.id" 
-                            :user="user"
-                            :class="userRoom?.id === user.id ? 'active' : ''"
-                            @click="setRoom(user)"></chatCard>
-                </ul>
+                <div class="loading" v-if="loading">Загрузка...</div>
+                <div class="users-block" v-else>
+                    <ul class="users" v-if="usersList">
+                        <chatCard v-for="user in usersList" 
+                                :key="user.id" 
+                                :user="user"
+                                :class="userRoom?.id === user.id ? 'active' : ''"
+                                @click="setRoom(user)"></chatCard>
+                    </ul>
+                    <div class="not_friends" v-else>
+                        <p>У вас нет друзей</p>
+                    </div>
+                </div>
+
                 
                 <ul class="friends users">
                   

@@ -23,6 +23,7 @@ export const useGetAllUsers = () => {
         friends.value = allUsers.value?.filter(user => data![0].friends.includes(user.id))
     }
 
+    
    
 
     return {

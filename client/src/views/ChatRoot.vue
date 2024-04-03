@@ -11,19 +11,16 @@ const user = useUser().userData
 
 socket.on('user-status-online', async()=>{
     await useUser().updateUser({online_status:true})
-   
+    await useGetAllUsers().getAllUsers()
     setTimeout(async()=>{
-        await useGetAllUsers().getAllUsers()
-        await useGetAllUsers().getFriends()
-
         await useUser().updateUser({online_status:false})
-    }, 500)
+    }, 1000)
    
 })
 
 socket.on('user-status-offline', async()=>{
     await useGetAllUsers().getAllUsers()
-    await useGetAllUsers().getFriends()
+   
 })
 
 

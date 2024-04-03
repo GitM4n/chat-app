@@ -27,7 +27,6 @@ io.on('connection', (client) => {
     io.emit("user-status-online");
     
     client.on('private-room', ({chat_id})=>{
-        console.log(chat_id)
         client.join(chat_id)
         console.log(`user connecterd in room ${chat_id}`)
     })

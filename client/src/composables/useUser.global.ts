@@ -1,7 +1,7 @@
-import {ref, onMounted} from 'vue'
+import {ref} from 'vue'
 import type {IUser, RegisterPayload, LoginPayload} from '@/interfaces'
 import {supabase} from '@/supabaseClient'
-import { idText } from 'typescript'
+
 
 
 
@@ -18,7 +18,7 @@ const status = ref<string>('')
 if(localStorage.getItem('user') !== 'undefined'){
     userData.value = JSON.parse(localStorage.getItem('user')!)
 }   
-console.log('userdata', localStorage.getItem('user'))
+
 
 
 

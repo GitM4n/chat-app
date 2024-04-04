@@ -10,16 +10,6 @@ const msgService = useMessageService()
 
 
 
-
-const props = defineProps<{
-  user?:IUser | null,
-  allUsers?:IUser[],
-  room?:IUser,
-
-}>()
-
-
-
 const receiver = computed(()=>{
     return allUsers.value?.find(user => user.id === props.room?.id)
 })
@@ -29,19 +19,34 @@ const chatId = computed(()=>{
     return `${Math.min(parseInt(props.user?.id as string), parseInt(props.room?.id as string))}_${Math.max(parseInt(props.user?.id as string), parseInt(props.room?.id as string))}`
 })
 
+const props = defineProps<{
+  user?:IUser | null,
+  allUsers?:IUser[],
+  room?:IUser,
+
+}>()
+
 
 const messageObj = ref({
   message: '',
   sender_id:props.user?.id,
-  chat_id:chatId.value
+  chat_id:chatId.value,
+  created_at:new Date().toISOString()
 } as IMessage)
 
 
 const messages = ref<IMessage[]>([])
 
+
+
+
+
+const time = (created_at:string) => {
+    return new Date(created_at).toLocaleTimeString('ru-RU', {hour: 'numeric', minute: 'numeric'})
+}
+
 socket.on('private-message', (data) => {
   messages.value.push(data)
-  console.log(messages.value)
   lastMessageScroll()
 })
 
@@ -51,13 +56,13 @@ const sendMessage = async() => {
 messageObj.value.message = messageObj.value.message.trim()
 if(!messageObj.value.message.replace(/\s/g, '').length) return
 
-// await msgService.defineConservation({
-//       id:chatId.value,
-//       members:[props.user?.id, props.room?.id]
-//     } as IConservation)
+await msgService.defineConservation({
+      id:chatId.value,
+      members:[props.user?.id, props.room?.id]
+    } as IConservation)
  
 
-// await msgService.sendPrivateMessage(messageObj.value)
+await msgService.sendPrivateMessage(messageObj.value)
 
 socket.emit('private-message', messageObj.value);
 
@@ -82,12 +87,15 @@ socket.emit('private-room', {
   sender_id:props.user?.id,
   chat_id:chatId.value
 })
-onMounted(() => {
+onMounted(async() => {
 
       socket.emit('private-room', {
       sender_id:props.user?.id,
       chat_id:chatId.value
     })
+
+   messages.value = await msgService.getPrivateMessages(chatId.value)
+
 
 })
 
@@ -119,10 +127,9 @@ onMounted(() => {
                         <div class="message__avatar" v-if="data.sender_id !== user?.id">
                             <img class="avatar-img" :src="receiver?.avatar" alt="receiverAvatar">
                         </div>
-                        <p class="message__inner">
-                            
+                        <p class="message__inner"> 
                               <span class="message__text">{{data.message}}</span> 
-    
+                              <small class="message__time" v-if="data.created_at">{{time(data.created_at)}}</small>
                         </p>
                         <div class="message__avatar" v-if="data.sender_id === user?.id">
                           <img class="avatar-img" :src="user.avatar" alt="yourAvatar">
@@ -134,7 +141,7 @@ onMounted(() => {
                  
             </div>
             <div class="message-input">
-                <MessageInput  v-model="messageObj.message" @send-message="sendMessage"/>
+                <MessageInput  v-model="messageObj.message" @send-message="sendMessage" />
             </div>
             
         </div>
@@ -184,6 +191,11 @@ onMounted(() => {
   max-height: 95%;
   flex-grow: 1;
   overflow-y: auto;
+  
+}
+
+.messages-content::-webkit-scrollbar {
+  display: none;
 }
 
 
@@ -202,7 +214,7 @@ onMounted(() => {
   }
   .message__inner{
     display: flex;
-    flex-direction: column-reverse;
+    flex-direction: column;
     padding: 2px 4px;
     border-radius: 4px;
   }
@@ -215,6 +227,11 @@ onMounted(() => {
   .message__avatar img{
     width: 100%;
     height: 100%;
+  }
+
+  .message__time{
+    font-size: 9px;
+    color: var(--light-gray);
   }
 
   .thisUser{

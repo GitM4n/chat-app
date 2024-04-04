@@ -14,7 +14,7 @@ const receiver = computed(()=>{
     return useGetAllUsers().allUsers.value?.find(user => user.id === props.user?.id)
 })
 
-console.log(props.user)
+
 
 
 </script>

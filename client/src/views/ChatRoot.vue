@@ -25,10 +25,6 @@ socket.on('user-status-offline', async()=>{
 
 
 
-
-
-
-
 onMounted(async() => {
     await useGetAllUsers().getAllUsers()
     await useGetAllUsers().getFriends()

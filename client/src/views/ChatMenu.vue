@@ -88,23 +88,14 @@ onMounted(async() => {
                         <p>У вас нет друзей</p>
                     </div>
                 </div>
-
-                
-                <ul class="friends users">
-                  
-                    <!-- <li class="friend user" v-for="friend in user?.friends" :key="friend">
-                        {{friend}}
-                    </li> -->
-                </ul>
             </div>
             <div class="chat-rooms">
-                <template v-if="userRoom">
-                    <PrivateChat v-for="friend in usersList" :key="friend.id"  :user="user" :room="friend" v-show="friend === userRoom"/>
-                </template>
-               
-             
+                <div class="single-chats" v-if="userRoom">
+                    <template v-for="friend in usersList" :key="friend.id">
+                        <PrivateChat :user="user" :room="friend" v-if="friend === userRoom"/>
+                    </template>
+                </div>
                 <p v-else>Выберите чат</p>
-                   <!-- <PublicChat :room="room" v-else-if="room"/> -->
             </div>
          
         </div>
@@ -205,6 +196,10 @@ h2{
 
 .current-user__avatar img{
     width: 100%;
+    height: 100%;
+}
+
+.single-chats{
     height: 100%;
 }
 </style>

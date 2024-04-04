@@ -53,6 +53,7 @@ const sendMessage = () => {
             @blur="nonEditable"
             @input="emit('update:modelValue', ($event.target as HTMLInputElement).innerText)"
             ref="inputElement" 
+            @keydown.enter.prevent="sendMessage()"
             ></p>
         <span  v-show="isEmpty">Сообщение...</span>
 </div>

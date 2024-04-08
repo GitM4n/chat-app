@@ -35,7 +35,7 @@ const register = async(payload:RegisterPayload):Promise<any> => {
      }
 
 
-     const {data, error} = await supabase.from('users').insert(payload).select('id, name, email, avatar')
+     const {data, error} = await supabase.from('users').insert(payload).select('id, name, email, avatar, friends')
      
      if(error) throw error
 
@@ -63,7 +63,7 @@ const login = async(payload:LoginPayload):Promise<any> => {
     if(error)  throw error
 
     const {data:user, error:userError} = await supabase.from('users')
-                                        .select('id, name, email, avatar')
+                                        .select('id, name, email, avatar, friends')
                                         .eq('email', payload?.email)
                                         .eq('password', payload?.password)
                                         .limit(1)

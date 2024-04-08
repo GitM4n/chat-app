@@ -48,7 +48,7 @@ export interface IUser {
     online_status?: boolean,
     birthdate?:string,
     age?:number,
-    friends?:IUser[]
+    friends?:id[]
 }
 
 export interface RegisterPayload {

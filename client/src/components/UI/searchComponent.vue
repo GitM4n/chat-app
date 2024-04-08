@@ -1,20 +1,30 @@
 <script setup lang="ts">
 import inputComponent from './inputComponent.vue';
-import {ref} from 'vue'
+import {ref, watch} from 'vue'
+
+
+
+const props = defineProps<{
+    placeholder?:string
+}>()
 
 const emit = defineEmits<{
-    (e:'findFriend', value:string):void
+    (e:'search', value:string):void
 }>()
 const searchText = ref<string>('')
 
+watch(searchText, () => {
+    findFriend()
+})
+
 const findFriend = () =>{
-    emit('findFriend', searchText.value)
+    emit('search', searchText.value)
 }
 
 </script>
 <template>
     <div class="input-search"> 
-        <inputComponent v-model="searchText" class="search-box" :placeholder="'Поиск собеседника...'" @input="findFriend()" />
+        <inputComponent v-model="searchText" class="search-box" :placeholder="props.placeholder"  />
     </div>
 </template>
 

@@ -42,6 +42,10 @@ const messages = ref<IMessage[]>([])
 
 
 const time = (created_at:string) => {
+    if(new Date(Date.now()).getDate() !== new Date(created_at).getDate()){
+        return new Date(created_at).toLocaleDateString('ru-RU', {year: 'numeric', month: 'numeric', day: 'numeric', hour: 'numeric', minute: 'numeric'})
+    }
+    
     return new Date(created_at).toLocaleTimeString('ru-RU', {hour: 'numeric', minute: 'numeric'})
 }
 

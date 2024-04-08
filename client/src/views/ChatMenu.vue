@@ -1,25 +1,30 @@
 <script setup lang="ts">
 import {onMounted, ref} from 'vue'
 import {useUser} from '@/composables/useUser.global'
-import {socket} from '@/socket'
 import signOut from '@/components/signOut.vue';
 import chatCard from '@/components/UI/chatCard.vue';
 import { useGetAllUsers } from '@/composables/useGetAllUsers';
+import { socket } from '@/socket';
 import type {IChat,IUser} from '@/interfaces'
-import PublicChat from '@/components/PublicChat.vue';
 import PrivateChat from '@/components/PrivateChat.vue';
 import searchComponent from '../components/UI/searchComponent.vue';
-
+import addFriendIcon from '@/components/icons/addFriendIcon.vue';
+import addFriendModal from '@/components/UI/addFriendModal.vue';
+import notificationIcon from '@/components/icons/notificationIcon.vue';
+import notificationModal from '@/components/UI/notificationModal.vue';
 
 const user = useUser().userData
 const usersList = ref<IUser[] | null>()
 const loading = ref(true)
+const showAddModal = ref(false)
+const showNotfModal = ref(false)
 
 const room = ref<IChat>()
 const userRoom = ref<IUser>() 
 
 
 const findFriend = (value:string) => {
+    console.log(value)
     usersList.value = useGetAllUsers().friends.value?.filter((user)=>{
         return user.name.toLowerCase().includes(value.toLowerCase())
     })
@@ -40,6 +45,15 @@ const setRoom = (data:IChat | IUser) => {
         userRoom.value = data as IUser
     }
 }
+
+const notfCount = ref(0)
+
+const openNotf = () => {
+    notfCount.value = 0
+    showNotfModal.value = true
+
+}
+
 
 
 
@@ -72,9 +86,15 @@ onMounted(async() => {
                     <div class="current-user__name">
                         {{ user?.name }}
                     </div>
+                    <div class="notifications" @click="openNotf">
+                        <notificationIcon class="notification-icon" />
+                        <div class="notifications__count" v-show="notfCount > 0">
+                            <p>{{notfCount}}</p>
+                        </div>
+                    </div>
                 </div>
                 <h2>Friends</h2>
-                <searchComponent @find-friend="findFriend"/>
+                <searchComponent @search="findFriend" :placeholder="'Поиск по друзьям'"/>
                 <div class="loading" v-if="loading">Загрузка...</div>
                 <div class="users-block" v-else>
                     <ul class="users" v-if="usersList">
@@ -88,6 +108,11 @@ onMounted(async() => {
                         <p>У вас нет друзей</p>
                     </div>
                 </div>
+                <div class="adv-features">
+                    <div class="add-friend" @click="showAddModal = true">
+                        <addFriendIcon class="add-friend-icon"/>
+                    </div>
+                </div>
             </div>
             <div class="chat-rooms">
                 <div class="single-chats" v-if="userRoom">
@@ -95,11 +120,16 @@ onMounted(async() => {
                         <PrivateChat :user="user" :room="friend" v-if="friend === userRoom"/>
                     </template>
                 </div>
-                <p v-else>Выберите чат</p>
+                <div class="let-start" v-else>
+                    <p>Здравствуйте, <b>{{user?.name}}</b></p>
+                    <small>Для начала общения выберите чат</small>
+                </div>
             </div>
          
         </div>
         <signOut class="signOut"/>
+        <addFriendModal class="addFriendModal" :show="showAddModal" @close="showAddModal = false"/>
+        <notificationModal class="notification-modal" :show="showNotfModal" @close="showNotfModal = false"/>
     </div>
 
 </template>
@@ -134,6 +164,8 @@ h2{
 }
 .chat-users{
     overflow-y: auto;
+    display: flex;
+    flex-direction: column;
     flex: 0 1 20%;
      padding: 0 20px;
      margin:10px 0;
@@ -202,4 +234,62 @@ h2{
 .single-chats{
     height: 100%;
 }
+
+.users-block{
+    flex-grow: 1;
+}
+
+
+.let-start{
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.let-start p{
+    font-size: 24px;
+}
+
+.adv-features{
+    display: flex;
+    justify-content: end;
+}
+
+.add-friend-icon{
+    width: 50px;
+    height: 50px;
+}
+
+.notifications{
+    position: relative;
+}
+
+.notification-icon{
+    width: 50px;
+    height: 50px;
+}
+
+.notifications__count{
+    position: absolute;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 40%;
+    height: 40%;
+    top: 0;
+    right: -2px;
+    border-radius: 50%;
+    background-color: var(--red);
+   
+}
+
+.notifications__count p{
+    color: var(--light);
+    font-size: 12px;
+
+}
+
+
 </style>

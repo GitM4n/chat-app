@@ -10,6 +10,7 @@ import { socket } from '@/socket';
 
 
 const currentUser = useUser().userData
+const usersService = useGetAllUsers()
 
 const users = useGetAllUsers().allUsers
 const filteredUsers = ref<IUser[]>()
@@ -38,12 +39,26 @@ const emit = defineEmits<{
 
 
 
-const requsetAddFriend = (id:string) => {
+const requsetAddFriend = async (id:string) => {
+
+    const data = await usersService.sendRequest(id, 'addFriend')
+    if(!data){
+        alert('Ошибка в запросе requsetAddFriend')
+        return
+    }
+
+
+
     socket.emit('add-friend', {
         sender_id:currentUser.value?.id,
         sender_name:currentUser.value?.name,
         receiver_id:id
     })
+
+    console.log('emitted')
+
+    
+
 }
 
 

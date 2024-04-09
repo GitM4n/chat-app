@@ -6,6 +6,8 @@
 // }
 
 type id = string
+export type requestType = 'addFriend' | 'acceptFriend' | 'rejectFriend' | 'removeFriend'
+export type requestStatus = 'pending' | 'accepted' | 'rejected'
 
 export interface IMessage {
     id: id,

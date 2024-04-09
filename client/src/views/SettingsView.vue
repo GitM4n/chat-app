@@ -62,7 +62,9 @@ const updateData = async () => {
     
     }
 
-    if(!validateDate()) {
+
+
+    if(!validateDate) {
         errors.value.birthdate = 'Недопустимый формат даты'
         return
     }
@@ -80,7 +82,8 @@ const updateData = async () => {
 
 
 const validateDate = () => {
-
+    if(userData.value.birthdate?.length === 0) return
+ 
     if(!userData.value.birthdate) return false
 
     const parts = userData.value.birthdate.split('/');

@@ -6,7 +6,9 @@ const props = defineProps<{
 }>()
 
 
-const receiver_name = ref('')
+
+
+const notificationsList = ref<string[]>([])
 
 const emit = defineEmits<{
     (e:'close'):void,
@@ -18,7 +20,9 @@ const emit = defineEmits<{
 
 socket.on('request-friend', (name) => {
     emit('notfCounts', 1)
-    receiver_name.value = name
+    console.log('запрос')
+    if(notificationsList.value.includes(name)) return
+    notificationsList.value.push(name)
 })
 
 
@@ -30,10 +34,10 @@ socket.on('request-friend', (name) => {
 <template>
     <div class="notification-modal" v-show="props.show" @click="emit('close')">
         <div class="notification-modal__inner" @click.stop>
-            <p>Нет уведомлений</p>
-            <ul class="notification-items">
-                <li class="notification-item">
-                   У вас запрос в друзья от {{ receiver_name }}
+            <p v-if="notificationsList.length === 0">Нет уведомлений</p>
+            <ul class="notification-items" v-else>
+                <li class="notification-item" v-for="name, idx in notificationsList" :key="idx" >
+                   У вас запрос в друзья от {{ name }}
                 </li>
             </ul>
         </div>

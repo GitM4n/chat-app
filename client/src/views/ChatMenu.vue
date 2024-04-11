@@ -93,8 +93,13 @@ onMounted(async() => {
                         </div>
                     </div>
                 </div>
+
                 <h2>Friends</h2>
-                <searchComponent @search="findFriend" :placeholder="'Поиск по друзьям'"/>
+
+                <searchComponent 
+                    @search="findFriend" 
+                    :placeholder="'Поиск по друзьям'"/>
+
                 <div class="loading" v-if="loading">Загрузка...</div>
                 <div class="users-block" v-else>
                     <ul class="users" v-if="usersList">
@@ -128,8 +133,13 @@ onMounted(async() => {
          
         </div>
         <signOut class="signOut"/>
-        <addFriendModal class="addFriendModal" :show="showAddModal" @close="showAddModal = false"/>
-        <notificationModal class="notification-modal" :show="showNotfModal" @close="showNotfModal = false"/>
+        <addFriendModal class="addFriendModal" 
+            :show="showAddModal" 
+            @close="showAddModal = false"/>
+        <notificationModal class="notification-modal"
+             @notf-counts="(count) => notfCount = count " 
+             :show="showNotfModal" 
+             @close="showNotfModal = false"/>
     </div>
 
 </template>
@@ -167,8 +177,9 @@ h2{
     display: flex;
     flex-direction: column;
     flex: 0 1 20%;
-     padding: 0 20px;
-     margin:10px 0;
+    padding: 0 20px;
+    margin:10px 0;
+    min-width: 320px;
     border-right:2px solid var(--green);
     
 }
@@ -210,6 +221,7 @@ h2{
 
 .current-user__name{
     font-weight: 600;
+    flex-grow: 1;
     font-size: 24px;
     text-transform: capitalize;
 }
@@ -267,8 +279,8 @@ h2{
 }
 
 .notification-icon{
-    width: 50px;
-    height: 50px;
+    width: 30px;
+    height: 30px;
 }
 
 .notifications__count{

@@ -1,7 +1,7 @@
 import {ref} from 'vue'
 import { useUser } from './useUser.global'
 import {supabase} from '@/supabaseClient'
-import type {IUser, requestType, requestStatus} from '@/interfaces'
+import type {IUser, requestType, IRequest} from '@/interfaces'
 
 const user = useUser().userData
 
@@ -47,12 +47,14 @@ export const useGetAllUsers = () => {
                                             })
                                             .select()
         if(error) throw (error)
-        console.log(data)
         return data
         
     }
 
     const acceptRequest = async(id: string, type:requestType) => {
+
+       let friendsIds:string[] = [] 
+
         const {data, error} = await supabase.from('requests')
                                             .update({
                                                 request_status: 'accepted'
@@ -60,9 +62,23 @@ export const useGetAllUsers = () => {
                                             .eq('sender_id', id)
                                             .eq('receiver_id', user.value?.id)
                                             .eq('request_name', type)
+                                            .select('sender_id')
         if(error) throw (error)
-        console.log(data)
+       
+        if(friends.value){
+            friendsIds = [...friends.value.map((item:IUser) => item.id), data[0].sender_id] 
+        }
+       
+       const {data:friendsData, error:friendsError} = await supabase.from('users')
+                        .update({
+                            friends: friendsIds 
+                        })
+                        .eq('id', user.value?.id)
+                        
 
+
+        if(friendsError) throw (friendsError)                
+        console.log(friendsData)
        
     }
 
@@ -78,6 +94,15 @@ export const useGetAllUsers = () => {
 
     }
 
+    const notifications = async():Promise<IRequest[]> => {
+        const {data, error} = await supabase.from('requests')
+                                            .select()
+                                            .eq('receiver_id', user.value?.id)
+                                            .eq('request_status', 'pending')
+        if(error) throw (error)
+        return data
+    }
+
     
    
 
@@ -87,6 +112,8 @@ export const useGetAllUsers = () => {
         getFriends,
         friends,
         sendRequest,
-        acceptRequest
+        acceptRequest,
+        rejectRequest,
+        notifications
     }
 }

@@ -22,7 +22,7 @@ const userSockets = {};
 
 io.on('connection', (client) => {
     userSockets[client.handshake.auth.user_id] = client.id;
-    console.log(userSockets);
+
     console.log(`user connected ${client.handshake.auth.username}`);
 
 
@@ -39,23 +39,16 @@ io.on('connection', (client) => {
 
 
 
-    client.on('add-friend', ({ sender_id, sender_name, receiver_id }) => {
-        const room = [sender_id, receiver_id].sort().join('-')
-        client.join(room)
+    client.on('add-friend', ({ sender_name, receiver_id }) => {
         client.to(userSockets[receiver_id]).emit('request-friend', sender_name)
-
     })
 
     client.on('accept-friend', ({ sender_id, receiver_id }) => {
-        const room = [sender_id, receiver_id].sort().join('-')
-        client.join(room)
-        client.to(room).emit('accept-friend', sender_id)
+        client.to(userSockets[receiver_id]).emit('accept-friend', sender_id)
     })
 
     client.on('reject-friend', ({ sender_id, receiver_id }) => {
-        const room = [sender_id, receiver_id].sort().join('-')
-        client.join(room)
-        client.to(room).emit('reject-friend', sender_id)
+        client.to(userSockets[receiver_id]).emit('reject-friend', sender_id)
     })
 
 

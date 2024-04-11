@@ -41,16 +41,15 @@ const emit = defineEmits<{
 
 const requsetAddFriend = async (id:string) => {
 
-    const data = await usersService.sendRequest(id, 'addFriend')
-    if(!data){
-        alert('Ошибка в запросе requsetAddFriend')
-        return
-    }
+    // const data = await usersService.sendRequest(id, 'addFriend')
+    // if(!data){
+    //     alert('Ошибка в запросе requsetAddFriend')
+    //     return
+    // }
 
 
 
     socket.emit('add-friend', {
-        sender_id:currentUser.value?.id,
         sender_name:currentUser.value?.name,
         receiver_id:id
     })

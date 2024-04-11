@@ -65,10 +65,10 @@ await msgService.defineConservation({
       members:[props.user?.id, props.room?.id]
     } as IConservation)
  
-
+socket.emit('private-message', messageObj.value);
 await msgService.sendPrivateMessage(messageObj.value)
 
-socket.emit('private-message', messageObj.value);
+
 
 lastMessageScroll()
 messageObj.value.message = '';
@@ -87,10 +87,8 @@ function lastMessageScroll() {
 }
 
 
-socket.emit('private-room', {
-  sender_id:props.user?.id,
-  chat_id:chatId.value
-})
+
+
 onMounted(async() => {
 
       socket.emit('private-room', {

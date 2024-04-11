@@ -18,6 +18,16 @@ export interface IMessage {
 
 }
 
+export interface IRequest {
+    id: id,
+    created_at?: string,
+    sender_id?: id,
+    receiver_id?: id,
+    request_name?: requestType,
+    status?: requestStatus,
+}
+
+
 export interface IConservation {
     id: id,
     created_at?: string,

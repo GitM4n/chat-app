@@ -39,16 +39,16 @@ io.on('connection', (client) => {
 
 
 
-    client.on('add-friend', ({ sender_name, receiver_id }) => {
-        client.to(userSockets[receiver_id]).emit('request-friend', sender_name)
+    client.on('add-friend', ({ sender_id, receiver_id, message }) => {
+        client.to(userSockets[receiver_id]).emit('request-friend', sender_id, message)
     })
 
-    client.on('accept-friend', ({ sender_id, receiver_id }) => {
-        client.to(userSockets[receiver_id]).emit('accept-friend', sender_id)
+    client.on('accept-friend', ({ sender_id, receiver_id, message }) => {
+        client.to(userSockets[receiver_id]).emit('accept-friend', sender_id, message)
     })
 
-    client.on('reject-friend', ({ sender_id, receiver_id }) => {
-        client.to(userSockets[receiver_id]).emit('reject-friend', sender_id)
+    client.on('reject-friend', ({ sender_id, receiver_id, message }) => {
+        client.to(userSockets[receiver_id]).emit('reject-friend', sender_id, message)
     })
 
 

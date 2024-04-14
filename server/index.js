@@ -1,11 +1,18 @@
+
+
 const express = require('express');
 const app = express();
 const http = require('http');
+const cors = require('cors')
 const server = http.createServer(app);
 const { Server } = require("socket.io");
+
+const host = process.env.HOST || "http://localhost:5173";
+
+console.log(host)
 const io = new Server(server, {
     cors: {
-        origin: "*",
+        origin: '*'
     }
 });
 
@@ -18,7 +25,7 @@ const port = process.env.PORT || 3000;
 
 const userSockets = {};
 
-
+app.use(cors())
 
 io.on('connection', (client) => {
     userSockets[client.handshake.auth.user_id] = client.id;
@@ -83,5 +90,6 @@ app.get('/', (req, res) => {
 
 server.listen(port, () => {
     console.log(`listening on *:${port}`);
+    
 
 })

@@ -82,12 +82,15 @@ const setStyle = (Nodeidx:number, style:'done' | 'undone', msg?:string) => {
     if(controls) controls.classList.add('hidden')
 
    
-    if(notificationsNodes[Nodeidx].firstChild?.firstChild && msg){
-        const textContent = notificationsNodes[Nodeidx].firstChild.firstChild.textContent;
-        if (textContent) {
-            notificationsNodes[Nodeidx].firstChild.firstChild.textContent = msg;
-        }
+    if (notificationsNodes[Nodeidx]
+    && notificationsNodes[Nodeidx].firstChild
+    && notificationsNodes[Nodeidx].firstChild.firstChild
+    && msg) {
+    const textContent = notificationsNodes[Nodeidx].firstChild.firstChild.textContent;
+    if (textContent) {
+        notificationsNodes[Nodeidx].firstChild.firstChild.textContent = msg;
     }
+}
 
 }
 

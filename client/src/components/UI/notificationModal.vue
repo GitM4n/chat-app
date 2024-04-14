@@ -79,9 +79,11 @@ const setStyle = (Nodeidx:number, style:'done' | 'undone', msg?:string) => {
     const controls = notificationsNodes[Nodeidx].querySelector('.controls')
     notificationsNodes[Nodeidx].classList.add(style)
  
-    controls?.classList.add('hidden')
+    if(controls) controls.classList.add('hidden')
+
    
-    if(notificationsNodes[Nodeidx].firstChild
+    if(notificationsNodes[Nodeidx]
+    && notificationsNodes[Nodeidx].firstChild
     && notificationsNodes[Nodeidx].firstChild.firstChild
     && msg){
         notificationsNodes[Nodeidx].firstChild.firstChild.textContent = msg

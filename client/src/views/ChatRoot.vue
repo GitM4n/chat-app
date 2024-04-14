@@ -14,7 +14,7 @@ socket.on('user-status-online', async()=>{
     await useGetAllUsers().getAllUsers()
     setTimeout(async()=>{
         await useUser().updateUser({online_status:false})
-    }, 1000)
+    }, 800)
    
 })
 
@@ -25,14 +25,17 @@ socket.on('user-status-offline', async()=>{
 
 
 
-onMounted(async() => {
+onMounted(async() => { 
     await useGetAllUsers().getAllUsers()
+   
     await useGetAllUsers().getFriends()
     socket.connect()
     socket.auth = {  
     username:user.value?.name,
     user_id:user.value?.id
     };
+
+    await useGetAllUsers().acceptedFriends()
 
 })
 

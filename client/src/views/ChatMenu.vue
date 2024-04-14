@@ -65,7 +65,7 @@ onMounted(async() => {
     setTimeout(() => {
         usersList.value = useGetAllUsers().friends.value
         loading.value = false
-    }, 500)
+    }, 400)
     
 })
 
@@ -137,7 +137,7 @@ onMounted(async() => {
             :show="showAddModal" 
             @close="showAddModal = false"/>
         <notificationModal class="notification-modal"
-             @notf-counts="(count) => notfCount = count " 
+             @notf-counts="notfCount++" 
              :show="showNotfModal" 
              @close="showNotfModal = false"/>
     </div>

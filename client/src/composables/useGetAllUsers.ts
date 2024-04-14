@@ -20,6 +20,8 @@ export const useGetAllUsers = () => {
     const getFriends = async() => {
         const {data} = await supabase.from('users').select('friends').eq('id', user.value?.id)
         if(data![0].friends === null) return
+
+ 
         friends.value = allUsers.value?.filter(user => data![0].friends.includes(user.id))
     
     }
@@ -65,21 +67,85 @@ export const useGetAllUsers = () => {
                                             .select('sender_id')
         if(error) throw (error)
        
-        if(friends.value){
-            friendsIds = [...friends.value.map((item:IUser) => item.id), data[0].sender_id] 
-        }
+        
+        console.log(friends.value)
        
-       const {data:friendsData, error:friendsError} = await supabase.from('users')
+        if(friends.value === undefined){
+                friendsIds.push(data[0].sender_id)
+        }else{
+                friendsIds = [...friends.value!.map((item:IUser) => item.id), data[0].sender_id]
+        } 
+    
+      
+        
+        
+
+      
+       
+       const {error:friendsError} = await supabase.from('users')
                         .update({
-                            friends: friendsIds 
+                            friends:friendsIds
                         })
                         .eq('id', user.value?.id)
+
+       
+
+
+
                         
 
 
         if(friendsError) throw (friendsError)                
-        console.log(friendsData)
+      
        
+    }
+
+
+    const acceptedFriends = async() => {
+
+        let friendsIds:string[] = [] 
+       
+
+        const {data:checkRequest, error:checkRequestError} = await supabase.from('requests')
+                                        .select('receiver_id')
+                                        .eq('sender_id', user.value?.id)
+                                        .eq('request_name', 'addFriend')
+                                        .eq('request_status', 'accepted')
+
+
+        if(checkRequestError) throw(checkRequestError)
+
+        if(checkRequest!.length === 0) return
+
+        if(friends.value?.includes(checkRequest[0].receiver_id)) return
+
+        console.log(friends.value)
+        if(friends.value === undefined){
+                friendsIds.push(checkRequest[0].receiver_id)
+        }else{
+                console.log(friends.value)
+                friendsIds = [...friends.value!.map((item:IUser) => item.id), checkRequest[0].receiver_id]
+        } 
+        
+      
+         
+      
+        const {error} = await supabase.from('users')
+                        .update({
+                            friends: friendsIds  
+                        })
+                        .eq('id', user.value?.id)
+
+        if(error) throw (error)
+
+        const { error:deleteRequestError} = await supabase.from('requests')
+                        .delete()
+                        .eq('sender_id', user.value?.id)
+                        .eq('request_name', 'addFriend')
+                        .eq('request_status', 'accepted')
+
+        if(deleteRequestError) throw (deleteRequestError)
+                
     }
 
     const rejectRequest = async(id: string, type:requestType) => {
@@ -114,6 +180,7 @@ export const useGetAllUsers = () => {
         sendRequest,
         acceptRequest,
         rejectRequest,
-        notifications
+        notifications,
+        acceptedFriends
     }
 }

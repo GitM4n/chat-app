@@ -12,7 +12,7 @@ const host = process.env.HOST || "http://localhost:5173";
 console.log(host)
 const io = new Server(server, {
     cors: {
-        origin: '*'
+        origin: 'https://chat-app-tan-iota.vercel.app/'
     }
 });
 

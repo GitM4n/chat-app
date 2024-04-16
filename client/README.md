@@ -45,5 +45,3 @@ npm run build
 
 
 
-### Screens
-![alt text](image.png)

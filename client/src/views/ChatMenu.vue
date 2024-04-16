@@ -62,6 +62,7 @@ const openNotf = () => {
 
 onMounted(async() => {
     await useGetAllUsers().getFriends()
+
     setTimeout(() => {
         usersList.value = useGetAllUsers().friends.value
         loading.value = false

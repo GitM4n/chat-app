@@ -14,6 +14,7 @@ export const useGetAllUsers = () => {
     const getAllUsers = async() => {
         const {data} = await supabase.from('users').select().neq('id', user.value?.id)
         allUsers.value = data
+        console.log('getAllUsersComplete')
     }
 
 
@@ -23,7 +24,7 @@ export const useGetAllUsers = () => {
 
  
         friends.value = allUsers.value?.filter(user => data![0].friends.includes(user.id))
-    
+        console.log('getFriends complete')
     }
 
     const sendRequest = async(id: string, type:requestType) => {
@@ -145,6 +146,8 @@ export const useGetAllUsers = () => {
                         .eq('request_status', 'accepted')
 
         if(deleteRequestError) throw (deleteRequestError)
+
+            console.log('acceptFriendsComplete')
                 
     }
 
